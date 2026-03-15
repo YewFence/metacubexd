@@ -1,0 +1,9 @@
+services:
+  metacubexd:
+    build: .
+    container_name: metacubexd
+    restart: unless-stopped
+    ports:
+      - '9090:80'
+    environment:
+      - DEFAULT_BACKEND_URL=${DEFAULT_BACKEND_URL:-http://127.0.0.1:9097}
