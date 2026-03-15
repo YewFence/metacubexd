@@ -340,7 +340,7 @@ export function useConfigActions() {
     const request = useRequest()
     updatingGEODatabases.value = true
     try {
-      await request.post('configs/geo')
+      await request.post('configs/geo', { timeout: 180_000 })
     } catch {
       /* empty */
     }
