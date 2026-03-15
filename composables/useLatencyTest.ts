@@ -12,7 +12,6 @@ async function measureLatency(url: string): Promise<number | null> {
   try {
     const startTime = performance.now()
     await fetch(url, {
-      method: 'HEAD',
       mode: 'no-cors',
       cache: 'no-store',
     })
