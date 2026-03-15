@@ -294,14 +294,17 @@ export function useConfigActions() {
     const request = useRequest()
     fetchingRemoteConfig.value = true
     try {
-      // Fetch config content from remote URL
-      const response = await ky.get(url)
-      const payload = await response.text()
+      // Fetch config content via server-side proxy to avoid CORS
+      const payload = await $fetch<string>('/api/fetch-remote-config', {
+        method: 'POST',
+        body: { url },
+      })
 
-      // Update config with fetched payload
+      // Update config with fetched payload (Mihomo needs time to parse large configs)
       await request.put('configs', {
         searchParams: { force: true },
         json: { path: '', payload },
+        timeout: 60_000,
       })
     } catch (error) {
       console.error('Failed to fetch remote config:', error)
