@@ -4,7 +4,7 @@ services:
     container_name: metacubexd
     restart: unless-stopped
     ports:
-      - '9090:80'
+      - '${PRIVATE_IP:-127.0.0.1}:9097:80'
     environment:
       - DEFAULT_BACKEND_URL=${DEFAULT_BACKEND_URL:-http://127.0.0.1:9097}
       - MIHOMO_CONFIG_PATH=/config/config.yaml

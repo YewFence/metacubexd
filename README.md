@@ -1,12 +1,16 @@
-# metacubexd
+# metacubexd (Personal Fork)
 
 **Mihomo Dashboard, The Official One, XD**
 
-[![pr-closed](https://img.shields.io/github/issues-pr-closed/metacubex/metacubexd?style=for-the-badge)](https://github.com/metacubex/metacubexd/pulls)
-[![last-commit](https://img.shields.io/github/last-commit/metacubex/metacubexd?style=for-the-badge)](https://github.com/metacubex/metacubexd/commits)
-[![build](https://img.shields.io/github/actions/workflow/status/metacubex/metacubexd/release.yml?style=for-the-badge)](https://github.com/metacubex/metacubexd/actions)
-[![downloads](https://img.shields.io/github/downloads/metacubex/metacubexd/total?style=for-the-badge)](https://github.com/metacubex/metacubexd/releases)
-[![license](https://img.shields.io/github/license/metacubex/metacubexd?style=for-the-badge)](./LICENSE)
+> **Note:** This is a personal fork of [metacubex/metacubexd](https://github.com/metacubex/metacubexd), customized for self-hosted deployment on my private LAN. Key changes include:
+>
+> - Server-side proxy for fetching remote subscription configs (bypasses CORS)
+> - Optional config persistence to disk via bind mount (Docker deployment)
+> - Default binding to `127.0.0.1` for security, configurable via `PRIVATE_IP` env var
+>
+> If you're looking for the official version, please visit the [upstream repository](https://github.com/metacubex/metacubexd).
+
+[![build](https://img.shields.io/github/actions/workflow/status/yewfence/metacubexd/release.yml?style=for-the-badge)](https://github.com/yewfence/metacubexd/actions)
 
 ## ✨ Features
 
@@ -18,6 +22,8 @@
 - 🎨 Beautiful UI with light/dark theme support
 - 📱 Fully responsive design for mobile devices
 - 🌐 Multi-language support (English, 中文, Русский)
+- 🔗 Server-side proxy for fetching remote subscription configs (bypasses CORS)
+- 💾 Optional: persist fetched subscription config to disk (Docker deployment)
 
 ## 🖼️ Preview
 
@@ -51,12 +57,12 @@
 
 </details>
 
-## 🔗 Official Links
+## 🔗 Online Version
 
-| Platform         | URL                                    |
-| :--------------- | :------------------------------------- |
-| GitHub Pages     | https://metacubex.github.io/metacubexd |
-| Cloudflare Pages | https://metacubexd.pages.dev           |
+If you prefer using the dashboard without Docker, the upstream project provides hosted versions:
+
+- [GitHub Pages](https://metacubex.github.io/metacubexd)
+- [Cloudflare Pages](https://metacubexd.pages.dev)
 
 ## 🚀 Quick Start
 
@@ -68,32 +74,36 @@ Enable external-controller in your mihomo config:
 external-controller: 0.0.0.0:9090
 ```
 
-### Option 1: Use Pre-built Assets
+> **Looking for static deployment?** This fork focuses on Docker deployment with server-side proxy features. For pre-built static assets (gh-pages), please use the [upstream repository](https://github.com/metacubex/metacubexd).
 
-```shell
-# Clone the gh-pages branch
-git clone https://github.com/metacubex/metacubexd.git -b gh-pages /etc/mihomo/ui
-
-# Set external-ui in your config
-# external-ui: /etc/mihomo/ui
-
-# Update to latest version
-git -C /etc/mihomo/ui pull -r
-```
-
-### Option 2: Docker
+### Option 1: Docker
 
 ```shell
 # Basic usage
-docker run -d --restart always -p 80:80 --name metacubexd ghcr.io/metacubex/metacubexd
+docker run -d --restart always -p 80:80 --name metacubexd ghcr.io/yewfence/metacubexd
 
 # With custom default backend URL
 docker run -d --restart always -p 80:80 --name metacubexd \
   -e DEFAULT_BACKEND_URL=http://192.168.1.1:9090 \
-  ghcr.io/metacubex/metacubexd
+  ghcr.io/yewfence/metacubexd
+
+# With remote config persistence (optional)
+# Requires metacubexd and mihomo on the same machine.
+# Mount the mihomo config file into the container via bind mount,
+# or set up your own sync mechanism to keep the config in sync.
+#
+# WARNING: Fetching a remote subscription will overwrite the entire config file,
+# which may remove your external-controller setting and break the dashboard connection.
+# Use mihomo's -ext-ctl flag to force the external controller address:
+#   mihomo -d /path/to/config -ext-ctl 0.0.0.0:9090
+docker run -d --restart always -p 80:80 --name metacubexd \
+  -e DEFAULT_BACKEND_URL=http://192.168.1.1:9090 \
+  -e MIHOMO_CONFIG_PATH=/config/config.yaml \
+  -v /path/to/your/config.yaml:/config/config.yaml \
+  ghcr.io/yewfence/metacubexd
 
 # Update
-docker pull ghcr.io/metacubex/metacubexd && docker restart metacubexd
+docker pull ghcr.io/yewfence/metacubexd && docker restart metacubexd
 ```
 
 <details>
@@ -103,7 +113,7 @@ docker pull ghcr.io/metacubex/metacubexd && docker restart metacubexd
 services:
   metacubexd:
     container_name: metacubexd
-    image: ghcr.io/metacubex/metacubexd
+    image: ghcr.io/yewfence/metacubexd
     restart: always
     ports:
       - '80:80'
@@ -133,7 +143,7 @@ docker compose pull && docker compose up -d
 
 </details>
 
-### Option 3: Build from Source
+### Option 2: Build from Source
 
 ```shell
 # Install dependencies
