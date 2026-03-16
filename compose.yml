@@ -7,3 +7,6 @@ services:
       - '9090:80'
     environment:
       - DEFAULT_BACKEND_URL=${DEFAULT_BACKEND_URL:-http://127.0.0.1:9097}
+      - MIHOMO_CONFIG_PATH=/config/config.yaml
+    volumes:
+      - ${MIHOMO_CONFIG_PATH:-/root/.config/mihomo/config.yaml}:/config/config.yaml

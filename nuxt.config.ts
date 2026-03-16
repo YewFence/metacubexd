@@ -21,6 +21,7 @@ export default defineNuxtConfig({
   // Public keys can be overridden at runtime via NUXT_PUBLIC_* env vars
   // e.g. NUXT_PUBLIC_DEFAULT_BACKEND_URL=http://host:port
   runtimeConfig: {
+    mihomoConfigPath: '', // 环境变量: NUXT_MIHOMO_CONFIG_PATH
     public: {
       appVersion: pkg.version,
       mockMode: process.env.MOCK_MODE === 'true',
