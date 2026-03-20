@@ -243,6 +243,7 @@
     "resetToDefaults": "重置为默认"
   },
   "connectionError": "后端不可达",
+  "mixedContentError": "HTTPS/HTTP 混合内容冲突",
   "connectionErrorDesc": "无法连接到后端，请检查后端是否正在运行，或切换到其他后端。",
   "retry": "重试",
   "recommendation": {

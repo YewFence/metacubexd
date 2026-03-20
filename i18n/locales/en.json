@@ -243,6 +243,7 @@
     "resetToDefaults": "Reset to Defaults"
   },
   "connectionError": "Backend Unreachable",
+  "mixedContentError": "HTTPS/HTTP Mixed Content",
   "connectionErrorDesc": "Cannot connect to the backend. Please check if the backend is running or switch to another endpoint.",
   "retry": "Retry",
   "recommendation": {

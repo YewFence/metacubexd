@@ -221,5 +221,6 @@
   "remoteConfigURL": "URL удалённой конфигурации",
   "remoteConfigURLPlaceholder": "Введите URL файла конфигурации",
   "themeColorTooltip": "Порядок цветов: Фон, Акцент, Текст",
-  "useMobileConnectionsTable": "Включить табличный вид на мобильных"
+  "useMobileConnectionsTable": "Включить табличный вид на мобильных",
+  "mixedContentError": "Ошибка смешанного контента HTTPS/HTTP"
 }

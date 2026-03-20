@@ -9,12 +9,15 @@ import {
   IconMenu2,
   IconNetwork,
   IconRuler,
+  IconServer,
   IconSettings,
 } from '@tabler/icons-vue'
 
 const route = useRoute()
+const router = useRouter()
 const { t } = useI18n()
 const configStore = useConfigStore()
+const endpointStore = useEndpointStore()
 
 const navItems = computed(() => [
   { href: '/overview', name: t('overview'), icon: IconHome },
@@ -42,6 +45,11 @@ watch(
 // Toggle sidebar expanded state
 const toggleSidebar = () => {
   configStore.sidebarExpanded = !configStore.sidebarExpanded
+}
+
+function switchBackend() {
+  endpointStore.setSelectedEndpoint('')
+  router.push('/setup')
 }
 </script>
 
@@ -216,6 +224,23 @@ const toggleSidebar = () => {
             <LangSwitcher />
             <ThemeSwitcher />
           </div>
+          <!-- Switch Backend button -->
+          <button
+            class="mb-2 flex w-full cursor-pointer items-center gap-2 rounded-lg border border-[var(--sidebar-border)] px-2 py-1.5 text-left text-xs text-base-content/50 transition-all duration-200 hover:border-[color-mix(in_oklch,var(--color-base-content)_20%,transparent)] hover:bg-[var(--sidebar-hover)] hover:text-base-content"
+            :class="
+              configStore.sidebarExpanded ? '' : 'lg:justify-center lg:px-0'
+            "
+            :title="endpointStore.currentEndpoint?.url || t('switchEndpoint')"
+            @click="switchBackend"
+          >
+            <IconServer class="h-3.5 w-3.5 shrink-0" />
+            <span
+              class="min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap"
+              :class="configStore.sidebarExpanded ? '' : 'lg:hidden'"
+            >
+              {{ endpointStore.currentEndpoint?.url || t('switchEndpoint') }}
+            </span>
+          </button>
           <Versions :collapsed="!configStore.sidebarExpanded" />
         </div>
       </div>

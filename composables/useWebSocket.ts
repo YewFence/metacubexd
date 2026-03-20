@@ -31,7 +31,13 @@ export function useBackendWebSocket() {
     const params = new URLSearchParams()
     if (secret) params.set('token', secret)
 
-    const ws = new WebSocket(`${wsUrl}/${path}?${params.toString()}`)
+    let ws: WebSocket
+    try {
+      ws = new WebSocket(`${wsUrl}/${path}?${params.toString()}`)
+    } catch (error) {
+      console.error(`Failed to create WebSocket for ${path}:`, error)
+      return null
+    }
 
     ws.onmessage = (event) => {
       try {
@@ -170,14 +176,18 @@ export function useBackendWebSocket() {
       if (endpoint.secret) params.set('token', endpoint.secret)
       params.set('level', configStore.logLevel)
 
-      logsWs = new WebSocket(`${wsUrl}/logs?${params.toString()}`)
-      logsWs.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data) as Log
-          logsStore.addLog(data)
-        } catch {
-          // Ignore parse errors
+      try {
+        logsWs = new WebSocket(`${wsUrl}/logs?${params.toString()}`)
+        logsWs.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data) as Log
+            logsStore.addLog(data)
+          } catch {
+            // Ignore parse errors
+          }
         }
+      } catch (error) {
+        console.error('Failed to create logs WebSocket:', error)
       }
     }
   }
@@ -212,14 +222,18 @@ export function useBackendWebSocket() {
       if (endpoint.secret) params.set('token', endpoint.secret)
       params.set('level', configStore.logLevel)
 
-      logsWs = new WebSocket(`${wsUrl}/logs?${params.toString()}`)
-      logsWs.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data) as Log
-          logsStore.addLog(data)
-        } catch {
-          // Ignore parse errors
+      try {
+        logsWs = new WebSocket(`${wsUrl}/logs?${params.toString()}`)
+        logsWs.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data) as Log
+            logsStore.addLog(data)
+          } catch {
+            // Ignore parse errors
+          }
         }
+      } catch (error) {
+        console.error('Failed to create logs WebSocket:', error)
       }
     }
   }

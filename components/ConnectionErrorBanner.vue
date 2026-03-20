@@ -7,6 +7,18 @@ const endpointStore = useEndpointStore()
 
 const { isError, refetch, isFetching } = useVersionQuery()
 
+// Detect HTTPS page connecting to HTTP backend (mixed content policy blocks this)
+const isMixedContent = computed(() => {
+  if (import.meta.server) return false
+  const endpoint = endpointStore.currentEndpoint
+  if (!endpoint) return false
+  return (
+    window.location.protocol === 'https:' && endpoint.url.startsWith('http://')
+  )
+})
+
+const showBanner = computed(() => isError.value || isMixedContent.value)
+
 function switchEndpoint() {
   endpointStore.setSelectedEndpoint('')
   router.push('/setup')
@@ -15,7 +27,7 @@ function switchEndpoint() {
 
 <template>
   <div
-    v-if="isError"
+    v-if="showBanner"
     class="fixed top-0 right-0 left-0 z-[100] flex items-center justify-between gap-2 bg-error/90 px-4 py-2 text-error-content backdrop-blur-sm"
   >
     <div class="flex min-w-0 items-center gap-2">
@@ -32,7 +44,7 @@ function switchEndpoint() {
         />
       </svg>
       <span class="truncate text-sm font-medium">
-        {{ t('connectionError') }}
+        {{ isMixedContent ? t('mixedContentError') : t('connectionError') }}
       </span>
       <span class="hidden truncate text-xs opacity-80 sm:inline">
         {{ endpointStore.currentEndpoint?.url }}
@@ -40,6 +52,7 @@ function switchEndpoint() {
     </div>
     <div class="flex shrink-0 items-center gap-2">
       <button
+        v-if="!isMixedContent"
         class="btn text-error-content btn-ghost btn-xs hover:bg-error-content/20"
         :disabled="isFetching"
         @click="() => refetch()"
